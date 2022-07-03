@@ -1,0 +1,4 @@
+{"level":"info","ts":1656833527.8613591,"caller":"logger/logger.go:23","msg":"failed to fetch URL","url":"https","attempt":3,"backoff":1}
+{"level":"info","ts":1656833527.861472,"caller":"logger/logger.go:29","msg":"Failed to fetch URL: htps"}
+{"level":"info","ts":1656833603.086817,"caller":"logger/logger.go:24","msg":"failed to fetch URL","url":"https","attempt":3,"backoff":1}
+{"level":"info","ts":1656833603.087052,"caller":"logger/logger.go:30","msg":"Failed to fetch URL: htps"}

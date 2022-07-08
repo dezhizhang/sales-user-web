@@ -1,16 +1,21 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
+	"go.uber.org/zap"
+	"user_web/initialize"
 )
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "hello",
-		})
-	})
-	r.Run(":8082")
+	//初始化日志
+	initialize.Logger()
+
+	//初始化路由
+	r := initialize.Routers()
+	zap.S().Debugf("启动服务，端口:%d", 8082)
+	err := r.Run(":8082")
+
+	if err != nil {
+		zap.S().Panic("启动失败", err.Error())
+	}
+
 }

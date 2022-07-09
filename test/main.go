@@ -1,19 +1,26 @@
 package main
 
 import (
-	"go.uber.org/zap"
-	"time"
+	"fmt"
+	"github.com/spf13/viper"
 )
 
+type ServerConfig struct {
+	Name string `mapstructure:"name"`
+}
+
 func main() {
-	logger, _ := zap.NewProduction()
-	defer logger.Sync() // flushes buffer, if any
-	sugar := logger.Sugar()
-	sugar.Infow("failed to fetch URL",
-		// Structured context as loosely typed key-value pairs.
-		"url", "https",
-		"attempt", 3,
-		"backoff", time.Second,
-	)
-	sugar.Infof("Failed to fetch URL: %s", "htps")
+	v := viper.New()
+	v.SetConfigFile("config.yaml")
+	err := v.ReadInConfig()
+	if err != nil {
+		panic(err)
+	}
+	serverConfig := ServerConfig{}
+	err = v.Unmarshal(&serverConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(serverConfig.Name)
 }

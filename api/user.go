@@ -14,7 +14,7 @@ func GetUserList(ctx *gin.Context) {
 	if err != nil {
 		zap.S().Errorw("连接服务失败", "msg", err.Error())
 	}
-	//proto.UserClient()
+
 	userSrvClient := proto.NewUserClient(conn)
 	rsp, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageSize: 10, PageIndex: 1})
 	if err != nil {

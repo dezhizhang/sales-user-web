@@ -5,8 +5,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+type MysqlConfig struct {
+	Host string `mapstructure:"host"`
+	Port int    `mapstructure:"port"`
+}
+
 type ServerConfig struct {
-	Name string `mapstructure:"name"`
+	Mysql MysqlConfig `mapstructure:"mysql"`
+	Name  string      `mapstructure:"name"`
 }
 
 func main() {
@@ -22,5 +28,5 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(serverConfig.Name)
+	fmt.Println(serverConfig.Mysql)
 }

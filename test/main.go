@@ -27,6 +27,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(serverConfig.Mysql)
+	fmt.Println(serverConfig)
 }

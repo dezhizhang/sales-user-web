@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"net/http"
+	"strconv"
 	"user_web/proto"
 )
 
@@ -14,9 +15,13 @@ func GetUserList(ctx *gin.Context) {
 	if err != nil {
 		zap.S().Errorw("连接服务失败", "msg", err.Error())
 	}
-
+	pageIndex := ctx.DefaultQuery("pageIndex", "1")
+	pageSize := ctx.DefaultQuery("pageSize", "10")
+	pageIndexInt, _ := strconv.Atoi(pageIndex)
+	pageSizeInt, _ := strconv.Atoi(pageSize)
 	userSrvClient := proto.NewUserClient(conn)
-	rsp, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageSize: 10, PageIndex: 1})
+	rsp, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageSize: uint32(pageSizeInt),
+		PageIndex: uint32(pageIndexInt)})
 	if err != nil {
 		zap.S().Errorw("查询用户列表失败")
 		return

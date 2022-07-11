@@ -1,7 +1,11 @@
 package global
 
-import "user_web/model"
+import (
+	"google.golang.org/grpc"
+	"user_web/model"
+)
 
 var (
 	UserWeb *model.ServerConfig
+	Conn    *grpc.ClientConn
 )

@@ -2,64 +2,49 @@ package main
 
 import (
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/spf13/viper"
+	"github.com/bwmarrin/snowflake"
 )
 
-//type MysqlConfig struct {
-//	Host string `mapstructure:"host"`
-//	Port int    `mapstructure:"port"`
-//}
-//
-//type ServerConfig struct {
-//	Mysql MysqlConfig `mapstructure:"mysql"`
-//	Name  string      `mapstructure:"name"`
-//}
-//
 //func main() {
-//	v := viper.New()
-//	v.SetConfigFile("config.yaml")
-//	err := v.ReadInConfig()
+//
+//	// Create a new Node with a Node number of 1
+//	node, err := snowflake.NewNode(1)
 //	if err != nil {
-//		panic(err)
+//		fmt.Println(err)
+//		return
 //	}
-//	serverConfig := ServerConfig{}
-//	err = v.Unmarshal(&serverConfig)
-//	if err != nil {
-//		panic(err)
-//	}
-//	fmt.Println(serverConfig)
+//
+//	// Generate a snowflake ID.
+//	id := node.Generate()
+//
+//	// Print out the ID in a few different ways.
+//	fmt.Printf("Int64  ID: %d\n", id)
+//	fmt.Printf("String ID: %s\n", id)
 //}
 
-type MySqlConfig struct {
-	Host string `mapstructure:"host"`
-	Port int    `mapstructure:"port"`
-}
+//func main() {
+//	node, err := snowflake.NewNode(1)
+//	if err != nil {
+//		panic(err)
+//	}
+//	id := node.Generate()
+//	fmt.Println(id)
+//}
 
-type ServerConfig struct {
-	Mysql MySqlConfig `mapstructure:"mysql"`
-	Name  string      `mapstructure:"name"`
-}
+//func main() {
+//	node, err := snowflake.NewNode(1)
+//	if err != nil {
+//		panic(err)
+//	}
+//	id := node.Generate()
+//	fmt.Println(id)
+//}
 
 func main() {
-	v := viper.New()
-	v.SetConfigFile("config.yaml")
-	err := v.ReadInConfig()
+	node, err := snowflake.NewNode(1)
 	if err != nil {
 		panic(err)
 	}
-	serverConfig := ServerConfig{}
-	err = v.Unmarshal(&serverConfig)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(serverConfig)
-
-	// 动态临控变化
-	v.WatchConfig()
-	v.OnConfigChange(func(e fsnotify.Event) {
-		v.ReadInConfig()
-		v.Unmarshal(&serverConfig)
-	})
-	fmt.Println(serverConfig)
+	id := node.Generate()
+	fmt.Println(id)
 }

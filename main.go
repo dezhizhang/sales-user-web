@@ -14,6 +14,8 @@ func main() {
 	//初始化配置文件
 	initialize.Config()
 
+	//初始化grpc链接
+	initialize.InitConn()
 	//初始化路由
 	r := initialize.Routers()
 	zap.S().Debugf("启动服务，端口:%d", 8082)

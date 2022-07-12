@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 	"user_web/global"
 	"user_web/initialize"
+	validator2 "user_web/validator"
 )
 
 func main() {
@@ -16,6 +19,11 @@ func main() {
 
 	//注册初始化翻译器
 	initialize.InitTrans("zh")
+
+	//自定义验证
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("mobile", validator2.ValidateMobile)
+	}
 
 	//初始化grpc链接
 	initialize.InitConn()

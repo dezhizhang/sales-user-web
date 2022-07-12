@@ -22,7 +22,7 @@ message MobileRequest{
 }
 //id查询
 message  IdRequest {
-  uint64 id = 1;
+  string id = 1;
 }
 
 //注册用户
@@ -33,11 +33,11 @@ message  CreateUserInfo{
   uint64 birthday = 4;
   int32 gender = 5;
   int32 role = 6;
-  uint64 id = 7;
+  string id = 7;
 }
 //更新用户
 message UpdateUserInfo{
-  uint64 id = 1;
+  string id = 1;
   string mobile = 2;
   string name = 3;
   string password = 4;
@@ -48,7 +48,7 @@ message UpdateUserInfo{
 
 //返回用户信息
 message UserInfoResponse {
-  uint64 id = 1;
+  string id = 1;
   string password = 2;
   string mobile = 3;
   uint64 birthday = 4;

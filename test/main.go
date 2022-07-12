@@ -45,6 +45,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	id := node.Generate()
+	id := node.Generate().String()
 	fmt.Println(id)
 }

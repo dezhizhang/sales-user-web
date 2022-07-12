@@ -3,10 +3,12 @@ package api
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"strconv"
+	"user_web/forms"
 	"user_web/global"
 	"user_web/model"
 	"user_web/proto"
@@ -85,6 +87,36 @@ func CreateUser(ctx *gin.Context) {
 		"msg":     "创健用户成功",
 		"data":    rsp,
 		"success": true,
+	})
+
+}
+
+func LoginIn(c *gin.Context) {
+	loginUserForm := forms.LoginUserForm{}
+	if err := c.ShouldBind(&loginUserForm); err != nil {
+		errs, ok := err.(validator.ValidationErrors)
+		if !ok {
+			c.JSON(http.StatusOK, gin.H{
+				"code":    400,
+				"msg":     err.Error(),
+				"success": false,
+				"data":    nil,
+			})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    400,
+			"success": false,
+			"msg":     errs.Translate(global.Trans),
+			"data":    nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "获取成功",
+		"data": nil,
 	})
 
 }

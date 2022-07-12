@@ -14,6 +14,9 @@ func main() {
 	//初始化配置文件
 	initialize.Config()
 
+	//注册初始化翻译器
+	initialize.InitTrans("zh")
+
 	//初始化grpc链接
 	initialize.InitConn()
 	//初始化路由

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin/binding"
+	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 	"user_web/global"
@@ -23,6 +24,12 @@ func main() {
 	//自定义验证
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("mobile", validator2.ValidateMobile)
+		v.RegisterTranslation("mobile", global.Trans, func(ut ut.Translator) error {
+			return ut.Add("mobile", "{0} 非法的手机号码", true)
+		}, func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("mobile", fe.Field())
+			return t
+		})
 	}
 
 	//初始化grpc链接

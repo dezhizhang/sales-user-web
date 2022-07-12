@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"log"
@@ -45,6 +46,7 @@ func DeleteUser(ctx *gin.Context) {
 		zap.S().Errorw("类型转换失败")
 	}
 	userSrvClient := proto.NewUserClient(global.Conn)
+	fmt.Println(uint64(id))
 	rsp, err := userSrvClient.DeleteUser(context.Background(), &proto.IdRequest{
 		Id: uint64(id),
 	})
@@ -69,7 +71,6 @@ func CreateUser(ctx *gin.Context) {
 	if err != nil {
 		zap.S().Errorw("获取参数失败")
 	}
-	//user.Id = utils.SnowflakeId()
 	userSrvClient := proto.NewUserClient(global.Conn)
 	rsp, err := userSrvClient.CreateUser(context.Background(), &proto.CreateUserInfo{
 		Id:       uint64(utils.SnowflakeId()),

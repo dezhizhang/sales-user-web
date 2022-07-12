@@ -39,23 +39,28 @@ func GetUserList(ctx *gin.Context) {
 }
 
 func DeleteUser(ctx *gin.Context) {
-	//data, _ := ioutil.ReadAll(ctx.Request.Body)
-	//
-	//fmt.Println(string(data).Id)
-	//idInt, _ := strconv.Atoi(string(data).)
-	//fmt.Println(string(data))
-	//userSrvClient := proto.NewUserClient(global.Conn)
-	//rsp, err := userSrvClient.DeleteUser(context.Background(), &proto.IdRequest{Id: int32(idInt)})
-	//if err != nil {
-	//	zap.S().Errorw("删除用户失败%s", err)
-	//	return
-	//}
-	//ctx.JSON(http.StatusOK, gin.H{
-	//	"code":    200,
-	//	"msg":     "删除用户成功",
-	//	"success": true,
-	//	"data":    rsp,
-	//})
+	str := ctx.Param("id")
+	id, err := strconv.Atoi(str)
+	if err != nil {
+		zap.S().Errorw("类型转换失败")
+	}
+	userSrvClient := proto.NewUserClient(global.Conn)
+	rsp, err := userSrvClient.DeleteUser(context.Background(), &proto.IdRequest{
+		Id: uint64(id),
+	})
+	if err != nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "删除用户失败",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"msg":     "删除用户成功",
+		"success": true,
+		"data":    rsp,
+	})
 }
 
 func CreateUser(ctx *gin.Context) {

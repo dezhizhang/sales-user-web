@@ -10,7 +10,7 @@ func Router(Router *gin.RouterGroup) {
 	{
 		userRouter.POST("/add", api.CreateUser)
 		userRouter.GET("/list", api.GetUserList)
-		userRouter.DELETE("/delete", api.DeleteUser)
+		userRouter.DELETE("/delete/:id", api.DeleteUser)
 	}
 
 }

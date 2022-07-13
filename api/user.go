@@ -113,10 +113,26 @@ func LoginIn(c *gin.Context) {
 		return
 	}
 
+	userSrvClient := proto.NewUserClient(global.Conn)
+	res, err := userSrvClient.GetUserByExist(context.Background(), &proto.UserLogin{
+		Mobile:   loginUserForm.Mobile,
+		Password: loginUserForm.Password,
+	})
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    400,
+			"msg":     err.Error(),
+			"success": false,
+			"data":    nil,
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "获取成功",
-		"data": nil,
+		"code":    200,
+		"msg":     "获取成功",
+		"success": true,
+		"data":    res,
 	})
 
 }

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
@@ -23,6 +24,7 @@ var (
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("token")
+		fmt.Println(c.Request.Header.Get("path"))
 		if token == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"msg":  "未登录",
@@ -55,6 +57,8 @@ func Auth() gin.HandlerFunc {
 		}
 
 		c.Set("name", claims.Name)
+		c.Set("userId", claims.Id)
+		c.Next()
 
 	}
 }

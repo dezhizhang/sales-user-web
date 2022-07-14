@@ -6,7 +6,7 @@ import (
 	"user_web/middleware"
 )
 
-func Router(Router *gin.RouterGroup) {
+func UserRouter(Router *gin.RouterGroup) {
 	userRouter := Router.Group("/user").Use(middleware.Auth()).Use(middleware.Cors())
 	{
 		userRouter.POST("/add", api.CreateUser)

@@ -1,7 +1,19 @@
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"user_web/api"
+)
 
-func IBaseRouter(Router *gin.RouterGroup) {
-	baseRouter := Router.Group("/captcha", api)
+func CommonRouter(Router *gin.RouterGroup) {
+	common := Router.Group("/common")
+	sms := api.Sms{}
+	captcha := api.Captcha{}
+
+	{
+		common.POST("/send-sms", sms.SendSms)
+		common.GET("/captcha", captcha.GetCaptcha)
+
+	}
+
 }

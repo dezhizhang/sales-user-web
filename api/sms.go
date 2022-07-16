@@ -35,14 +35,4 @@ func (that *Sms) SendSms(c *gin.Context) {
 		zap.S().Errorf("获取redis失败%s", err.Error())
 	}
 	fmt.Printf(val)
-	//err = driver.RDB.Set("name", "张德志", 0).Err()
-	//if err != nil {
-	//	zap.S().Errorf("设置值失败%s", err.Error())
-	//}
-	//val, err := driver.RDB.Get("name").Result()
-	//if err != nil {
-	//	zap.S().Errorf("获取redis失败%v", err.Error())
-	//}
-	//fmt.Printf(val)
-	//fmt.Printf("response is %#v\n", response)
 }

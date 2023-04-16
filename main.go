@@ -18,6 +18,8 @@ func main() {
 	//初始化配置文件
 	initialize.Config()
 
+	fmt.Println(global.UserWeb)
+
 	//注册初始化翻译器
 	initialize.InitTrans("zh")
 

@@ -3,8 +3,8 @@ package initialize
 import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
-	"user_web/global"
-	"user_web/model"
+	"sales-user-web/global"
+	"sales-user-web/model"
 )
 
 var UserWeb *model.ServerConfig

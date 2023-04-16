@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"net/http"
-	"user_web/global"
-	"user_web/model"
+	"sales-user-web/global"
+	"sales-user-web/model"
 )
 
 type JWT struct {

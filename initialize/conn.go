@@ -3,7 +3,7 @@ package initialize
 import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"user_web/global"
+	"sales-user-web/global"
 )
 
 // 初始化grpc链接

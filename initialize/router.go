@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"github.com/gin-gonic/gin"
-	"user_web/router"
+	"sales-user-web/router"
 )
 
 func Routers() *gin.Engine {

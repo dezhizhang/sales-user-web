@@ -6,9 +6,9 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
-	"user_web/global"
-	"user_web/initialize"
-	validator2 "user_web/validator"
+	"sales-user-web/global"
+	"sales-user-web/initialize"
+	validator2 "sales-user-web/validator"
 )
 
 func main() {

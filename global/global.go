@@ -3,7 +3,7 @@ package global
 import (
 	ut "github.com/go-playground/universal-translator"
 	"google.golang.org/grpc"
-	"user_web/model"
+	"sales-user-web/model"
 )
 
 var (

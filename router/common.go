@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"user_web/api"
+	"sales-user-web/api"
 )
 
 func CommonRouter(Router *gin.RouterGroup) {

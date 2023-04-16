@@ -1,4 +1,4 @@
-module user_web
+module sales-user-web
 
 go 1.17
 

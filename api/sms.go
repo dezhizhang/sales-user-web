@@ -5,7 +5,7 @@ import (
 	dysmsapi "github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"user_web/driver"
+	"sales-user-web/driver"
 )
 
 type Sms struct {

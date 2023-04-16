@@ -9,7 +9,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	chTranslations "github.com/go-playground/validator/v10/translations/zh"
-	"user_web/global"
+	"sales-user-web/global"
 )
 
 func InitTrans(local string) (err error) {

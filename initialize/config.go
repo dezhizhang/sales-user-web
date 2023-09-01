@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"sales-user-web/global"
@@ -21,5 +22,7 @@ func Config() {
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println()
 	zap.S().Infof("初始化配置文件")
 }

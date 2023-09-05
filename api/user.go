@@ -5,6 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"log"
 	"net/http"
 	"sales-user-web/forms"
@@ -12,33 +15,64 @@ import (
 	"sales-user-web/model"
 	"sales-user-web/proto"
 	"sales-user-web/utils"
-	"strconv"
 )
 
-//获取用户列表
-
-func GetUserList(ctx *gin.Context) {
-
-	pageIndex := ctx.DefaultQuery("pageIndex", "1")
-	pageSize := ctx.DefaultQuery("pageSize", "10")
-	pageIndexInt, _ := strconv.Atoi(pageIndex)
-	pageSizeInt, _ := strconv.Atoi(pageSize)
-	userSrvClient := proto.NewUserClient(global.Conn)
-	rsp, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageSize: uint32(pageSizeInt),
-		PageIndex: uint32(pageIndexInt)})
+// HandleGrpcErrorToHttp 获取用户列表
+func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	if err != nil {
-		zap.S().Errorw("查询用户列表失败")
+		if e, ok := status.FromError(err); ok {
+			switch e.Code() {
+			case codes.NotFound:
+				c.JSON(http.StatusNotFound, gin.H{"msg": e.Message()})
+			case codes.Internal:
+				c.JSON(http.StatusInternalServerError, gin.H{"msg": "内部错误"})
+			case codes.InvalidArgument:
+				c.JSON(http.StatusBadRequest, gin.H{"msg": "参数错误"})
+			default:
+				c.JSON(http.StatusInternalServerError, gin.H{"msg": "其它错误"})
+
+			}
+		}
 		return
 	}
+}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"code":    200,
-		"msg":     "获取用户列成功",
-		"success": true,
-		"data":    rsp.Data,
-		"total":   rsp.Total,
-	})
+func GetUserList(ctx *gin.Context) {
+	zap.S().Debugf("连接用户服务")
+	userConn, err := grpc.Dial("localhost:8082", grpc.WithInsecure())
+	if err != nil {
+		zap.S().Errorw("GetUserList 连拉用户服务失败", "msg", err.Error())
+	}
+	userSrvClient := proto.NewUserClient(userConn)
+	list, err1 := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageIndex: 1, PageSize: 10})
+	if err1 != nil {
+		zap.S().Errorw("GetUserList 查询用户列表失败", "msg", err1.Error())
+		HandleGrpcErrorToHttp(err, ctx)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"data": list})
 	zap.S().Debug("获取用户列表")
+
+	//pageIndex := ctx.DefaultQuery("pageIndex", "1")
+	//pageSize := ctx.DefaultQuery("pageSize", "10")
+	//pageIndexInt, _ := strconv.Atoi(pageIndex)
+	//pageSizeInt, _ := strconv.Atoi(pageSize)
+	//userSrvClient := proto.NewUserClient(global.Conn)
+	//rsp, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageSize: uint32(pageSizeInt),
+	//	PageIndex: uint32(pageIndexInt)})
+	//if err != nil {
+	//	zap.S().Errorw("查询用户列表失败")
+	//	return
+	//}
+	//
+	//ctx.JSON(http.StatusOK, gin.H{
+	//	"code":    200,
+	//	"msg":     "获取用户列成功",
+	//	"success": true,
+	//	"data":    rsp.Data,
+	//	"total":   rsp.Total,
+	//})
+	//zap.S().Debug("获取用户列表")
 }
 
 func DeleteUser(ctx *gin.Context) {

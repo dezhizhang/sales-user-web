@@ -1,11 +1,10 @@
 package model
 
-type User struct {
-	BaseModal
-	Name     string `gorm:"type:varchar(100);not null" json:"name"`
-	Mobile   string `gorm:"index:index_mobile;unique;type:varchar(11);not null" json:"mobile"`
-	Password string `gorm:"type:varchar(100);not null" json:"password"`
-	Birthday int64  `gorm:"type:datetime" json:"birthday"`
-	Gender   int    `gorm:"type:int" json:"gender"`
-	Role     int    `gorm:"type:int;column:role;default:1"`
+type UserResponse struct {
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	Mobile   string `json:"mobile"`
+	Birthday int64  `json:"birthday"`
+	Gender   int    `json:"gender"`
+	Role     int    `json:"role"`
 }

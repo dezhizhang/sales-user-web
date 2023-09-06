@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 	"net/http"
 	"sales-user-web/forms"
 	"sales-user-web/global"
@@ -30,7 +29,6 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 				c.JSON(http.StatusBadRequest, gin.H{"msg": "参数错误"})
 			default:
 				c.JSON(http.StatusInternalServerError, gin.H{"msg": "其它错误"})
-
 			}
 		}
 		return
@@ -44,35 +42,25 @@ func GetUserList(ctx *gin.Context) {
 		zap.S().Errorw("GetUserList 连拉用户服务失败", "msg", err.Error())
 	}
 	userSrvClient := proto.NewUserClient(userConn)
-	list, err1 := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageIndex: 1, PageSize: 10})
+	rsp, err1 := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageIndex: 1, PageSize: 10})
 	if err1 != nil {
 		zap.S().Errorw("GetUserList 查询用户列表失败", "msg", err1.Error())
 		HandleGrpcErrorToHttp(err, ctx)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"data": list})
-	zap.S().Debug("获取用户列表")
+	result := make([]interface{}, 0)
+	for _, value := range rsp.Data {
+		user := model.UserResponse{
+			Id:       value.Id,
+			Name:     value.Name,
+			Birthday: int64(value.Birthday),
+			Gender:   int(value.Gender),
+			Mobile:   value.Mobile,
+		}
+		result = append(result, user)
+	}
+	utils.ResponseSuccessJson(ctx, "获取用户成功", result)
 
-	//pageIndex := ctx.DefaultQuery("pageIndex", "1")
-	//pageSize := ctx.DefaultQuery("pageSize", "10")
-	//pageIndexInt, _ := strconv.Atoi(pageIndex)
-	//pageSizeInt, _ := strconv.Atoi(pageSize)
-	//userSrvClient := proto.NewUserClient(global.Conn)
-	//rsp, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageSize: uint32(pageSizeInt),
-	//	PageIndex: uint32(pageIndexInt)})
-	//if err != nil {
-	//	zap.S().Errorw("查询用户列表失败")
-	//	return
-	//}
-	//
-	//ctx.JSON(http.StatusOK, gin.H{
-	//	"code":    200,
-	//	"msg":     "获取用户列成功",
-	//	"success": true,
-	//	"data":    rsp.Data,
-	//	"total":   rsp.Total,
-	//})
-	//zap.S().Debug("获取用户列表")
 }
 
 func DeleteUser(ctx *gin.Context) {
@@ -97,31 +85,31 @@ func DeleteUser(ctx *gin.Context) {
 }
 
 func CreateUser(ctx *gin.Context) {
-	var user model.User
-	err := ctx.BindJSON(&user)
-	if err != nil {
-		zap.S().Errorw("获取参数失败")
-	}
-	userSrvClient := proto.NewUserClient(global.Conn)
-	rsp, err := userSrvClient.CreateUser(context.Background(), &proto.CreateUserInfo{
-		Id:       utils.SnowflakeId(),
-		Name:     user.Name,
-		Role:     int32(user.Role),
-		Gender:   int32(user.Gender),
-		Password: user.Password,
-		Mobile:   user.Mobile,
-		Birthday: uint64(user.Birthday),
-	})
-
-	if err != nil {
-		log.Fatalf("创建用户失败%s", err.Error())
-	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"code":    200,
-		"msg":     "创健用户成功",
-		"data":    rsp,
-		"success": true,
-	})
+	//var user model.User
+	//err := ctx.BindJSON(&user)
+	//if err != nil {
+	//	zap.S().Errorw("获取参数失败")
+	//}
+	//userSrvClient := proto.NewUserClient(global.Conn)
+	//rsp, err := userSrvClient.CreateUser(context.Background(), &proto.CreateUserInfo{
+	//	Id:       utils.SnowflakeId(),
+	//	Name:     user.Name,
+	//	Role:     int32(user.Role),
+	//	Gender:   int32(user.Gender),
+	//	Password: user.Password,
+	//	Mobile:   user.Mobile,
+	//	Birthday: uint64(user.Birthday),
+	//})
+	//
+	//if err != nil {
+	//	log.Fatalf("创建用户失败%s", err.Error())
+	//}
+	//ctx.JSON(http.StatusOK, gin.H{
+	//	"code":    200,
+	//	"msg":     "创健用户成功",
+	//	"data":    rsp,
+	//	"success": true,
+	//})
 
 }
 

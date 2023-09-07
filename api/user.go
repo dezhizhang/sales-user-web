@@ -75,6 +75,22 @@ func UserLoginIn(ctx *gin.Context) {
 		utils.ValidatorError(ctx, err)
 		return
 	}
+	host := global.ServerConfig.UserSrv.Host
+	port := global.ServerConfig.UserSrv.Port
+	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", host, port), grpc.WithInsecure())
+	if err != nil {
+		zap.S().Errorw("GetUserList 连拉用户服务失败", "msg", err.Error())
+	}
+	userSrvClient := proto.NewUserClient(userConn)
+	rsp, err := userSrvClient.GetUserByExist(context.Background(), &proto.UserLogin{
+		Mobile:   loginUserForm.Mobile,
+		Password: loginUserForm.Password,
+	})
+	if err != nil {
+		utils.ResponseErrorJson(ctx, http.StatusBadRequest, "登录失败")
+		return
+	}
+	utils.ResponseSuccessJson(ctx, "登录成功", 0, rsp)
 
 }
 

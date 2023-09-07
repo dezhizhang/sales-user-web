@@ -18,9 +18,8 @@ func InitTrans(local string) (err error) {
 		enT := en.New() //english
 		uni := ut.New(enT, zhT, enT)
 
-		var o bool
-		global.Trans, o = uni.GetTranslator(local)
-		if !o {
+		global.Trans, ok = uni.GetTranslator(local)
+		if !ok {
 			return fmt.Errorf("uni.GetTranslator(%s) failed", local)
 		}
 		// 注册翻译器

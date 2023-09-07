@@ -4,13 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"net/http"
-	"sales-user-web/forms"
 	"sales-user-web/global"
 	"sales-user-web/model"
 	"sales-user-web/proto"
@@ -36,6 +34,7 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	}
 }
 
+// GetUserList 获取用户列表
 func GetUserList(ctx *gin.Context) {
 	zap.S().Debugf("连接用户服务")
 	host := global.ServerConfig.UserSrv.Host
@@ -45,7 +44,10 @@ func GetUserList(ctx *gin.Context) {
 		zap.S().Errorw("GetUserList 连拉用户服务失败", "msg", err.Error())
 	}
 	userSrvClient := proto.NewUserClient(userConn)
-	rsp, err1 := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{PageIndex: 1, PageSize: 10})
+	rsp, err1 := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{
+		PageIndex: uint32(utils.TransformStringToInt(ctx.DefaultQuery("pageIndex", "1"))),
+		PageSize:  uint32(utils.TransformStringToInt(ctx.DefaultQuery("pageSize", "10"))),
+	})
 	if err1 != nil {
 		zap.S().Errorw("GetUserList 查询用户列表失败", "msg", err1.Error())
 		HandleGrpcErrorToHttp(err, ctx)
@@ -62,7 +64,17 @@ func GetUserList(ctx *gin.Context) {
 		}
 		result = append(result, user)
 	}
-	utils.ResponseSuccessJson(ctx, "获取用户成功", result)
+	utils.ResponseSuccessJson(ctx, "获取用户成功", int(rsp.Total), result)
+
+}
+
+// UserLoginIn 用户登录
+func UserLoginIn(ctx *gin.Context) {
+	var loginUserForm model.LoginUserForm
+	if err := ctx.ShouldBindJSON(&loginUserForm); err != nil {
+		utils.ValidatorError(ctx, err)
+		return
+	}
 
 }
 
@@ -116,48 +128,48 @@ func CreateUser(ctx *gin.Context) {
 
 }
 
-func LoginIn(c *gin.Context) {
-	loginUserForm := forms.LoginUserForm{}
-	if err := c.ShouldBind(&loginUserForm); err != nil {
-		errs, ok := err.(validator.ValidationErrors)
-		if !ok {
-			c.JSON(http.StatusOK, gin.H{
-				"code":    400,
-				"msg":     err.Error(),
-				"success": false,
-				"data":    nil,
-			})
-			return
-		}
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    400,
-			"success": false,
-			"msg":     errs.Translate(global.Trans),
-			"data":    nil,
-		})
-		return
-	}
-
-	userSrvClient := proto.NewUserClient(global.Conn)
-	res, err := userSrvClient.GetUserByExist(context.Background(), &proto.UserLogin{
-		Mobile:   loginUserForm.Mobile,
-		Password: loginUserForm.Password,
-	})
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    400,
-			"msg":     err.Error(),
-			"success": false,
-			"data":    nil,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code":    200,
-		"msg":     "获取成功",
-		"success": true,
-		"data":    res,
-	})
-
-}
+//func LoginIn(c *gin.Context) {
+//	loginUserForm := forms.LoginUserForm{}
+//	if err := c.ShouldBind(&loginUserForm); err != nil {
+//		errs, ok := err.(validator.ValidationErrors)
+//		if !ok {
+//			c.JSON(http.StatusOK, gin.H{
+//				"code":    400,
+//				"msg":     err.Error(),
+//				"success": false,
+//				"data":    nil,
+//			})
+//			return
+//		}
+//		c.JSON(http.StatusBadRequest, gin.H{
+//			"code":    400,
+//			"success": false,
+//			"msg":     errs.Translate(global.Trans),
+//			"data":    nil,
+//		})
+//		return
+//	}
+//
+//	userSrvClient := proto.NewUserClient(global.Conn)
+//	res, err := userSrvClient.GetUserByExist(context.Background(), &proto.UserLogin{
+//		Mobile:   loginUserForm.Mobile,
+//		Password: loginUserForm.Password,
+//	})
+//	if err != nil {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code":    400,
+//			"msg":     err.Error(),
+//			"success": false,
+//			"data":    nil,
+//		})
+//		return
+//	}
+//
+//	c.JSON(http.StatusOK, gin.H{
+//		"code":    200,
+//		"msg":     "获取成功",
+//		"success": true,
+//		"data":    res,
+//	})
+//
+//}

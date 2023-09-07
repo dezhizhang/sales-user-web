@@ -6,7 +6,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 	"net/http"
-	"sales-user-web/global"
 	"strconv"
 )
 
@@ -44,5 +43,5 @@ func ValidatorError(ctx *gin.Context, err error) {
 		ResponseErrorJson(ctx, http.StatusOK, err.Error())
 		return
 	}
-	ResponseErrorJson(ctx, http.StatusBadGateway, errs.Translate(global.Trans))
+	ResponseErrorJson(ctx, http.StatusBadGateway, errs.Error())
 }

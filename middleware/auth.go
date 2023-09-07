@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"net/http"
-	"sales-user-web/global"
 	"sales-user-web/model"
 )
 
@@ -65,7 +64,7 @@ func Auth() gin.HandlerFunc {
 
 func NewJWT() *JWT {
 	return &JWT{
-		[]byte(global.ServerConfig.JwtInfo.SigningKey),
+		//[]byte(global.ServerConfig.JwtInfo.SigningKey),
 	}
 }
 

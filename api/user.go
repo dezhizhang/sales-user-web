@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
@@ -37,7 +38,9 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 
 func GetUserList(ctx *gin.Context) {
 	zap.S().Debugf("连接用户服务")
-	userConn, err := grpc.Dial("localhost:8082", grpc.WithInsecure())
+	host := global.ServerConfig.UserSrv.Host
+	port := global.ServerConfig.UserSrv.Port
+	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", host, port), grpc.WithInsecure())
 	if err != nil {
 		zap.S().Errorw("GetUserList 连拉用户服务失败", "msg", err.Error())
 	}

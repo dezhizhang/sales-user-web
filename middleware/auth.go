@@ -6,7 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"net/http"
+	"sales-user-web/global"
 	"sales-user-web/model"
+	"sales-user-web/utils"
 )
 
 type JWT struct {
@@ -25,11 +27,8 @@ func Auth() gin.HandlerFunc {
 		token := c.Request.Header.Get("token")
 		fmt.Println(c.Request.Header.Get("path"))
 		if token == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"msg":  "未登录",
-				"code": 401,
-				"data": nil,
-			})
+			utils.ResponseErrorJson(c, http.StatusUnauthorized, "未登录")
+
 			c.Abort()
 			return
 		}
@@ -64,7 +63,7 @@ func Auth() gin.HandlerFunc {
 
 func NewJWT() *JWT {
 	return &JWT{
-		//[]byte(global.ServerConfig.JwtInfo.SigningKey),
+		[]byte(global.ServerConfig.JwtInfo.SigningKey),
 	}
 }
 

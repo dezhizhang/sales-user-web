@@ -5,6 +5,9 @@ type UserSrvConfig struct {
 	Port int    `mapstructure:"port"`
 }
 
+type JWTConfig struct {
+}
+
 type ServerConfig struct {
 	Name    string        `mapstructure:"name"`
 	Host    string        `mapstructure:"host"`

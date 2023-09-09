@@ -85,11 +85,11 @@ func UserLoginIn(ctx *gin.Context) {
 		zap.S().Errorw("GetUserList 连拉用户服务失败", "msg", err.Error())
 	}
 	userSrvClient := proto.NewUserClient(userConn)
-	rsp, err := userSrvClient.GetUserByExist(context.Background(), &proto.UserLogin{
+	rsp, err1 := userSrvClient.GetUserByExist(context.Background(), &proto.UserLogin{
 		Mobile:   loginUserForm.Mobile,
 		Password: loginUserForm.Password,
 	})
-	if err != nil {
+	if err1 != nil {
 		utils.ResponseErrorJson(ctx, http.StatusBadRequest, "登录失败")
 		return
 	}

@@ -1,10 +1,10 @@
 package middleware
 
 import (
+	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
 	"net/http"
 	"sales-user-web/global"
 	"sales-user-web/model"
@@ -18,7 +18,7 @@ type JWT struct {
 var (
 	TokenExpired     = errors.New("token过期了")
 	TokenNotValidYet = errors.New("token not active yet")
-	TokenMalformed   = errors.New("That's not even a token")
+	TokenMalformed   = errors.New("Thats not even a token")
 	TokenInValid     = errors.New("Could handle this token")
 )
 
@@ -34,24 +34,13 @@ func Auth() gin.HandlerFunc {
 		}
 		j := NewJWT()
 		claims, err := j.ParseToken(token)
-		if err != nil {
-			if err == TokenExpired {
-				c.JSON(http.StatusUnauthorized, gin.H{
-					"msg":     "授权已过期",
-					"code":    400,
-					"data":    nil,
-					"success": false,
-				})
-				c.Abort()
-				return
-			} else if err == TokenNotValidYet {
-				c.JSON(http.StatusUnauthorized, gin.H{
-					"msg":     "未登录",
-					"code":    400,
-					"data":    nil,
-					"success": false,
-				})
-			}
+		if err != nil && errors.Is(err, TokenExpired) {
+			utils.ResponseErrorJson(c, http.StatusUnauthorized, "授权已过期")
+			c.Abort()
+
+		} else if err != nil && errors.Is(err, TokenNotValidYet) {
+			utils.ResponseErrorJson(c, http.StatusUnauthorized, "未登录")
+			c.Abort()
 		}
 
 		c.Set("name", claims.Name)

@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -10,9 +11,11 @@ import (
 	"google.golang.org/grpc/status"
 	"net/http"
 	"sales-user-web/global"
+	"sales-user-web/middleware"
 	"sales-user-web/model"
 	"sales-user-web/proto"
 	"sales-user-web/utils"
+	"time"
 )
 
 // HandleGrpcErrorToHttp 获取用户列表
@@ -90,8 +93,22 @@ func UserLoginIn(ctx *gin.Context) {
 		utils.ResponseErrorJson(ctx, http.StatusBadRequest, "登录失败")
 		return
 	}
-	utils.ResponseSuccessJson(ctx, "登录成功", 0, rsp)
-
+	j := middleware.NewJWT()
+	claims := model.CustomClaims{
+		Id:   rsp.Id,
+		Name: rsp.Name,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix(),
+			ExpiresAt: time.Now().Unix() + 60*60*24,
+			Issuer:    "sales-user-web",
+		},
+	}
+	token, err := j.CreateToken(claims)
+	if err != nil {
+		utils.ResponseErrorJson(ctx, http.StatusInternalServerError, "内部错误")
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "登录成功", "token": token, "data": rsp})
 }
 
 func DeleteUser(ctx *gin.Context) {
@@ -127,7 +144,7 @@ func CreateUser(ctx *gin.Context) {
 	//	Name:     user.Name,
 	//	Role:     int32(user.Role),
 	//	Gender:   int32(user.Gender),
-	//	Password: user.Password,
+	//	Password:u]\y7yuiopiop[+	qwr]\user.Password,
 	//	Mobile:   user.Mobile,
 	//	Birthday: uint64(user.Birthday),
 	//})

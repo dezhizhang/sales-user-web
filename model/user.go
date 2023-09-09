@@ -14,6 +14,6 @@ type UserResponse struct {
 // 用户登录参数
 
 type LoginUserForm struct {
-	Mobile   string `form:"mobile" json:"mobile" binding:"required,mobile"`
+	Mobile   string `form:"mobile" json:"mobile" binding:"required"`
 	Password string `form:"password" json:"password" binging:"required,min=3,max=10"`
 }

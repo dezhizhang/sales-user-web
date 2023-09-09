@@ -19,7 +19,7 @@ func SnowflakeId() string {
 
 // ResponseSuccessJson 成功时返回公共方法
 func ResponseSuccessJson(ctx *gin.Context, msg string, total int, data interface{}) {
-	ctx.JSON(http.StatusOK, gin.H{"code": 200, "msg": msg, "total": total, "data": data})
+	ctx.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": msg, "total": total, "data": data})
 }
 
 // ResponseErrorJson 失败时返回

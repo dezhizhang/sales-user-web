@@ -26,6 +26,10 @@ func main() {
 	if err != nil {
 		zap.S().Errorf("初始化翻译器失败%s", err.Error())
 	}
+
+	// 初始化grpc连接
+	initialize.InitSrvConn()
+
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("mobile", myvalidator.ValidateMobile)
 		v.RegisterTranslation("mobile", global.Trans, func(ut ut.Translator) error {

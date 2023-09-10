@@ -18,8 +18,6 @@ func main() {
 	//2 初始化配置文件
 	initialize.InitConfig()
 
-	fmt.Println(global.ServerConfig)
-
 	//3 初始化routers
 	router := initialize.Routers()
 

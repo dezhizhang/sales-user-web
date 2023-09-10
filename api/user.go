@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/hashicorp/consul/api"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -40,9 +41,30 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 // GetUserList 获取用户列表
 func GetUserList(ctx *gin.Context) {
 	zap.S().Debugf("连接用户服务")
-	host := global.ServerConfig.UserSrv.Host
-	port := global.ServerConfig.UserSrv.Port
-	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", host, port), grpc.WithInsecure())
+	name := global.ServerConfig.UserSrv.Name
+	cfg := api.DefaultConfig()
+	cfg.Address = fmt.Sprintf("%s:%d",
+		global.ServerConfig.ConsulConfig.Host,
+		global.ServerConfig.ConsulConfig.Port,
+	)
+
+	client, err := api.NewClient(cfg)
+	if err != nil {
+		panic(err)
+	}
+	userSrvAddress := ""
+
+	data, err1 := client.Agent().ServicesWithFilter(fmt.Sprintf(`Service == "%s"`, name))
+	if err1 != nil {
+		panic(err1)
+	}
+
+	for _, value := range data {
+		userSrvAddress = value.Address
+		break
+	}
+
+	userConn, err := grpc.Dial(userSrvAddress, grpc.WithInsecure())
 	if err != nil {
 		zap.S().Errorw("GetUserList 连拉用户服务失败", "msg", err.Error())
 	}

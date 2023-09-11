@@ -18,6 +18,9 @@ func main() {
 	//2 初始化配置文件
 	initialize.InitConfig()
 
+	// 初始化nacos
+	initialize.InitNacos()
+
 	//3 初始化routers
 	router := initialize.Routers()
 

@@ -15,7 +15,7 @@ func InitConfig() {
 		panic(err)
 	}
 
-	err = v.Unmarshal(&global.ServerConfig)
+	err = v.Unmarshal(&global.NacosConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -23,7 +23,7 @@ func InitConfig() {
 	v.OnConfigChange(func(e fsnotify.Event) {
 		zap.S().Infof("配置文件发生变化%s", e.Name)
 		v.ReadInConfig()
-		v.Unmarshal(&global.ServerConfig)
+		v.Unmarshal(&global.NacosConfig)
 	})
 	zap.S().Infof("初始化配置文件")
 }

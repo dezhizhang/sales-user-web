@@ -1,16 +1,8 @@
-name: "user-web"
+
 host: "127.0.0.1"
-port: 8085
-
-user_srv:
-  host: "127.0.0.1"
-  name: "user-srv"
-  port: 8082
-
-jwt:
-  key: "sales-info"
-
-consul:
-  host: '127.0.0.1'
-  port: 8500
-
+port: 8848
+namespace: "a5445f77-b021-4247-8637-3f27f2ca08fa"
+user: "nacos"
+password: "nacos"
+dataId: "sales-user-web"
+group: "dev"

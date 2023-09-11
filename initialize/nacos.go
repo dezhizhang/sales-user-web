@@ -1,4 +1,4 @@
-package test
+package initialize
 
 import (
 	"encoding/json"
@@ -6,19 +6,21 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
-	"sales-user-web/model"
-	"testing"
+	"go.uber.org/zap"
+	"sales-user-web/global"
 )
 
-func TestNacos(t *testing.T) {
+func InitNacos() {
+	nacosConfig := global.NacosConfig
+
 	serverConfigs := []constant.ServerConfig{
 		{
-			IpAddr: "127.0.0.1",
-			Port:   8848,
+			IpAddr: nacosConfig.Host,
+			Port:   nacosConfig.Port,
 		},
 	}
 	clientConfig := constant.ClientConfig{
-		NamespaceId:         "a5445f77-b021-4247-8637-3f27f2ca08fa",
+		NamespaceId:         global.NacosConfig.Namespace,
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
 		LogDir:              "tmp/nacos/log",
@@ -31,22 +33,16 @@ func TestNacos(t *testing.T) {
 		"clientConfig":  clientConfig,
 	})
 	content, _ := client.GetConfig(vo.ConfigParam{
-		DataId: "sales-user-web",
-		Group:  "dev",
+		DataId: nacosConfig.DataId,
+		Group:  nacosConfig.Group,
 	})
 
-	serverSrvConfigs := model.ServerConfig{}
-	json.Unmarshal([]byte(content), &serverSrvConfigs)
-
-	//client.ListenConfig(vo.ConfigParam{
-	//	DataId: "sales-user-web",
-	//	Group:  "dev",
-	//	OnChange: func(namespace, group, dataId, data string) {
-	//		fmt.Println("配置文件发生变化")
-	//	},
-	//})
-	//time.Sleep(5000 * time.Second)
-
-	fmt.Println(serverSrvConfigs)
+	//ServerConfig := model.ServerConfig{}
+	err := json.Unmarshal([]byte(content), global.ServerConfig)
+	if err != nil {
+		zap.S().Errorw("序列化失败%s", err.Error())
+		return
+	}
+	fmt.Println("nacos", global.ServerConfig)
 
 }

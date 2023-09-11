@@ -11,5 +11,6 @@ var (
 	Conn          *grpc.ClientConn
 	Trans         ut.Translator
 	UserSrvClient proto.UserClient
+	NacosConfig   *model.NacosConfig  = &model.NacosConfig{}
 	ServerConfig  *model.ServerConfig = &model.ServerConfig{}
 )

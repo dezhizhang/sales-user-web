@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -119,8 +120,28 @@ func DeleteUser(ctx *gin.Context) {
 }
 
 func CreateUser(ctx *gin.Context) {
-	//var user model.User
-	//err := ctx.BindJSON(&user)
+	var user model.User
+	err := ctx.ShouldBindJSON(&user)
+	if err != nil {
+		zap.S().Errorw("CreateUser序列化失败%s", err)
+		return
+	}
+
+	fmt.Println(utils.SnowflakeId())
+	rsp, err := global.UserSrvClient.CreateUser(context.Background(), &proto.CreateUserInfo{
+		Id:       utils.SnowflakeId(),
+		Name:     user.Name,
+		Role:     int32(user.Role),
+		Gender:   int32(user.Gender),
+		Password: user.Password,
+		Mobile:   user.Mobile,
+	})
+	if err != nil {
+		zap.S().Errorw("创建用户失败%s", err.Error())
+		return
+	}
+
+	fmt.Println(rsp)
 	//if err != nil {
 	//	zap.S().Errorw("获取参数失败")
 	//}

@@ -2,6 +2,17 @@ package model
 
 // 用户信息返回
 
+type User struct {
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	Mobile   string `json:"mobile"`
+	Role     int    `json:"role"`
+	Gender   int    `json:"gender"`
+	Email    string `json:"email"`
+	Status   string `json:"status"`
+	Password string `json:"password"`
+}
+
 type UserResponse struct {
 	Id       string `json:"id"`
 	Name     string `json:"name"`
